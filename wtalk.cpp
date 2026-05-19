@@ -13,7 +13,7 @@
 #define IDC_EDIT 1
 #define IDC_BTN  2
 
-static const char* MODEL_PATH = "C:\\whisper.cpp\\models\\ggml-base.en.bin";
+static const char* MODEL_PATH = "C:\\whisper.cpp\\ggml-base.en.bin";
 static const int SAMPLE_RATE = 16000;
 static const int NUM_BUFS    = 8;
 static const int BUF_SAMPLES = SAMPLE_RATE / 10;  // 100 ms
