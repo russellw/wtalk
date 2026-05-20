@@ -154,7 +154,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp) {
         };
         g_hAccel = CreateAcceleratorTableW(accels, 2);
 
-        g_ctx = whisper_init_from_file(MODEL_PATH);
+        g_ctx = whisper_init_from_file_with_params(MODEL_PATH, whisper_context_default_params());
         if (!g_ctx) {
             MessageBoxW(hwnd, L"Failed to load whisper model", L"wtalk", MB_ICONERROR);
             return -1;
