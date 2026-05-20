@@ -119,7 +119,7 @@ static void start_recording() {
 
     waveInStart(g_hWaveIn);
     g_state = RECORDING;
-    SetWindowTextW(g_hBtn, L"Stop");
+    SetWindowTextW(g_hBtn, L"Stop (F10)");
 }
 
 static void stop_recording() {
@@ -136,10 +136,10 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp) {
             WS_CHILD | WS_VISIBLE | WS_VSCROLL |
             ES_MULTILINE | ES_AUTOVSCROLL | ES_WANTRETURN,
             0, 0, 0, 0, hwnd, (HMENU)IDC_EDIT, nullptr, nullptr);
-        g_hBtn = CreateWindowW(L"BUTTON", L"Record",
+        g_hBtn = CreateWindowW(L"BUTTON", L"Record (F10)",
             WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON,
             0, 0, 0, 0, hwnd, (HMENU)IDC_BTN, nullptr, nullptr);
-        g_hCut = CreateWindowW(L"BUTTON", L"Cut to Clipboard",
+        g_hCut = CreateWindowW(L"BUTTON", L"Cut to Clipboard (F12)",
             WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON,
             0, 0, 0, 0, hwnd, (HMENU)IDC_CUT, nullptr, nullptr);
 
@@ -199,7 +199,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp) {
             SendMessageW(g_hEdit, EM_REPLACESEL, FALSE, (LPARAM)g_result.c_str());
         }
         g_state = IDLE;
-        SetWindowTextW(g_hBtn, L"Record");
+        SetWindowTextW(g_hBtn, L"Record (F10)");
         EnableWindow(g_hBtn, TRUE);
         return 0;
     }
