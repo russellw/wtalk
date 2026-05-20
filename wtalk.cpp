@@ -34,7 +34,8 @@ static std::vector<int16_t> g_captured;
 static int               g_outstanding = 0;
 static std::wstring      g_result;
 
-static HWND g_hCut;
+static HWND   g_hCut;
+static HACCEL g_hAccel;
 
 static void layout(HWND hwnd) {
     RECT rc;
@@ -147,6 +148,12 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp) {
         SendMessageW(g_hBtn,  WM_SETFONT, (WPARAM)hFont, FALSE);
         SendMessageW(g_hCut,  WM_SETFONT, (WPARAM)hFont, FALSE);
 
+        ACCEL accels[] = {
+            { FVIRTKEY, VK_F10, IDC_BTN },
+            { FVIRTKEY, VK_F12, IDC_CUT },
+        };
+        g_hAccel = CreateAcceleratorTableW(accels, 2);
+
         g_ctx = whisper_init_from_file(MODEL_PATH);
         if (!g_ctx) {
             MessageBoxW(hwnd, L"Failed to load whisper model", L"wtalk", MB_ICONERROR);
@@ -223,8 +230,10 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE, LPSTR, int nCmdShow) {
 
     MSG msg;
     while (GetMessageW(&msg, nullptr, 0, 0)) {
-        TranslateMessage(&msg);
-        DispatchMessageW(&msg);
+        if (!TranslateAccelerator(g_hMain, g_hAccel, &msg)) {
+            TranslateMessage(&msg);
+            DispatchMessageW(&msg);
+        }
     }
     return (int)msg.wParam;
 }
