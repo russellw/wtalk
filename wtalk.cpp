@@ -12,6 +12,7 @@
 #define WM_DONE  (WM_USER + 1)
 #define IDC_EDIT 1
 #define IDC_BTN  2
+#define IDC_CUT  3
 
 static const char* MODEL_PATH = "C:\\whisper.cpp\\ggml-base.en.bin";
 static const int SAMPLE_RATE = 16000;
@@ -33,12 +34,16 @@ static std::vector<int16_t> g_captured;
 static int               g_outstanding = 0;
 static std::wstring      g_result;
 
+static HWND g_hCut;
+
 static void layout(HWND hwnd) {
     RECT rc;
     GetClientRect(hwnd, &rc);
     int bh = 36;
+    int half = rc.right / 2;
     SetWindowPos(g_hEdit, nullptr, 0, 0, rc.right, rc.bottom - bh, SWP_NOZORDER);
-    SetWindowPos(g_hBtn,  nullptr, 0, rc.bottom - bh, rc.right, bh, SWP_NOZORDER);
+    SetWindowPos(g_hBtn,  nullptr, 0, rc.bottom - bh, half, bh, SWP_NOZORDER);
+    SetWindowPos(g_hCut,  nullptr, half, rc.bottom - bh, rc.right - half, bh, SWP_NOZORDER);
 }
 
 static void requeue(WAVEHDR* hdr) {
@@ -133,10 +138,14 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp) {
         g_hBtn = CreateWindowW(L"BUTTON", L"Record",
             WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON,
             0, 0, 0, 0, hwnd, (HMENU)IDC_BTN, nullptr, nullptr);
+        g_hCut = CreateWindowW(L"BUTTON", L"Cut to Clipboard",
+            WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON,
+            0, 0, 0, 0, hwnd, (HMENU)IDC_CUT, nullptr, nullptr);
 
         HFONT hFont = (HFONT)GetStockObject(DEFAULT_GUI_FONT);
         SendMessageW(g_hEdit, WM_SETFONT, (WPARAM)hFont, FALSE);
         SendMessageW(g_hBtn,  WM_SETFONT, (WPARAM)hFont, FALSE);
+        SendMessageW(g_hCut,  WM_SETFONT, (WPARAM)hFont, FALSE);
 
         g_ctx = whisper_init_from_file(MODEL_PATH);
         if (!g_ctx) {
@@ -152,6 +161,10 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp) {
         if (LOWORD(wp) == IDC_BTN) {
             if      (g_state == IDLE)      start_recording();
             else if (g_state == RECORDING) stop_recording();
+        } else if (LOWORD(wp) == IDC_CUT) {
+            SendMessageW(g_hEdit, EM_SETSEL, 0, -1);
+            SendMessageW(g_hEdit, WM_COPY, 0, 0);
+            SendMessageW(g_hEdit, WM_SETTEXT, 0, (LPARAM)L"");
         }
         return 0;
     case MM_WIM_DATA: {
