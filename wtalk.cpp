@@ -237,6 +237,8 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp) {
         if (wp == HOTKEY_RAISE) {
             ShowWindow(g_hMain, SW_RESTORE);
             SetForegroundWindow(g_hMain);
+            if (g_state == IDLE)
+                start_recording();
         }
         return 0;
     case WM_DESTROY:
