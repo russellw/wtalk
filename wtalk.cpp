@@ -15,6 +15,7 @@
 #define IDC_EDIT 1
 #define IDC_BTN  2
 #define IDC_CUT  3
+#define HOTKEY_RAISE 1
 
 static const char* MODEL_PATH = "C:\\whisper.cpp\\ggml-base.en.bin";
 static const int SAMPLE_RATE = 16000;
@@ -186,6 +187,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp) {
             MessageBoxW(hwnd, L"Failed to load whisper model", L"wtalk", MB_ICONERROR);
             return -1;
         }
+        RegisterHotKey(hwnd, HOTKEY_RAISE, 0, VK_ADD);
         return 0;
     }
     case WM_SIZE:
@@ -231,7 +233,14 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp) {
         EnableWindow(g_hBtn, TRUE);
         return 0;
     }
+    case WM_HOTKEY:
+        if (wp == HOTKEY_RAISE) {
+            ShowWindow(g_hMain, SW_RESTORE);
+            SetForegroundWindow(g_hMain);
+        }
+        return 0;
     case WM_DESTROY:
+        UnregisterHotKey(g_hMain, HOTKEY_RAISE);
         if (g_ctx) whisper_free(g_ctx);
         PostQuitMessage(0);
         return 0;
