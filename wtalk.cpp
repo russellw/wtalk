@@ -199,6 +199,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp) {
             SendMessageW(g_hEdit, EM_SETSEL, 0, -1);
             SendMessageW(g_hEdit, WM_COPY, 0, 0);
             SendMessageW(g_hEdit, WM_SETTEXT, 0, (LPARAM)L"");
+            ShowWindow(g_hMain, SW_MINIMIZE);
         }
         return 0;
     case MM_WIM_DATA: {
