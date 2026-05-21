@@ -5,6 +5,7 @@
 #include <string>
 #include <thread>
 #include <cstdint>
+#include <cstdio>
 #include "whisper.h"
 
 #pragma comment(lib, "winmm.lib")
@@ -54,6 +55,28 @@ static void requeue(WAVEHDR* hdr) {
     g_outstanding++;
 }
 
+static void append_to_log(const std::string& text) {
+    wchar_t path[MAX_PATH];
+    GetModuleFileNameW(nullptr, path, MAX_PATH);
+    wchar_t* slash = wcsrchr(path, L'\\');
+    if (slash) wcscpy(slash + 1, L"wtalk.log");
+    else wcscpy(path, L"wtalk.log");
+
+    FILE* f = _wfopen(path, L"ab");
+    if (!f) return;
+
+    SYSTEMTIME st;
+    GetLocalTime(&st);
+    char header[32];
+    int hlen = sprintf(header, "[%04d-%02d-%02d %02d:%02d:%02d] ",
+        st.wYear, st.wMonth, st.wDay,
+        st.wHour, st.wMinute, st.wSecond);
+    fwrite(header, 1, hlen, f);
+    fwrite(text.c_str(), 1, text.size(), f);
+    fwrite("\n", 1, 1, f);
+    fclose(f);
+}
+
 static void finish_recording() {
     waveInClose(g_hWaveIn);
     g_state = TRANSCRIBING;
@@ -79,6 +102,9 @@ static void finish_recording() {
             if (!text.empty() && text[0] == ' ')
                 text.erase(0, 1);
         }
+
+        if (!text.empty())
+            append_to_log(text);
 
         int wlen = MultiByteToWideChar(CP_UTF8, 0, text.c_str(), -1, nullptr, 0);
         std::wstring wtext(wlen > 1 ? wlen - 1 : 0, L'\0');
