@@ -26,8 +26,8 @@ cmake --build build --config Release
 ## Usage
 | Action | Button | Shortcut |
 |---|---|---|
-| Raise window and start recording | — | Numpad + (global) |
-| Stop recording | Stop | F10 |
+| Raise window and start/stop recording | — | Numpad + (global) |
+| Start / stop recording | Record / Stop | F10 |
 | Copy text to clipboard and clear, then minimize | Cut to Clipboard | F12 |
 
 Transcription runs on a background thread so the UI stays responsive while the model processes audio.
