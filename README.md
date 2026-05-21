@@ -26,6 +26,7 @@ cmake --build build --config Release
 ## Usage
 | Action | Button | Shortcut |
 |---|---|---|
+| Raise window to foreground | — | Numpad + (global) |
 | Start / stop recording | Record / Stop | F10 |
 | Copy text to clipboard and clear, then minimize | Cut to Clipboard | F12 |
 
