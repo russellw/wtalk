@@ -27,6 +27,8 @@ cmake --build build --config Release
 | Action | Button | Shortcut |
 |---|---|---|
 | Start / stop recording | Record / Stop | F10 |
-| Copy text to clipboard and clear | Cut to Clipboard | F12 |
+| Copy text to clipboard and clear, then minimize | Cut to Clipboard | F12 |
 
 Transcription runs on a background thread so the UI stays responsive while the model processes audio.
+
+Each transcription is appended to `wtalk.log` in the same directory as the executable, with a timestamp on each entry.
