@@ -239,6 +239,8 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp) {
             SetForegroundWindow(g_hMain);
             if (g_state == IDLE)
                 start_recording();
+            else if (g_state == RECORDING)
+                stop_recording();
         }
         return 0;
     case WM_DESTROY:
