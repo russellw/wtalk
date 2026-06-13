@@ -39,11 +39,12 @@ static std::wstring      g_result;
 
 static HWND   g_hCut;
 static HACCEL g_hAccel;
+static HFONT  g_hFont;
 
 static void layout(HWND hwnd) {
     RECT rc;
     GetClientRect(hwnd, &rc);
-    int bh = 36;
+    int bh = 44;
     int half = rc.right / 2;
     SetWindowPos(g_hEdit, nullptr, 0, 0, rc.right, rc.bottom - bh, SWP_NOZORDER);
     SetWindowPos(g_hBtn,  nullptr, 0, rc.bottom - bh, half, bh, SWP_NOZORDER);
@@ -171,10 +172,12 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp) {
             WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON,
             0, 0, 0, 0, hwnd, (HMENU)IDC_CUT, nullptr, nullptr);
 
-        HFONT hFont = (HFONT)GetStockObject(DEFAULT_GUI_FONT);
-        SendMessageW(g_hEdit, WM_SETFONT, (WPARAM)hFont, FALSE);
-        SendMessageW(g_hBtn,  WM_SETFONT, (WPARAM)hFont, FALSE);
-        SendMessageW(g_hCut,  WM_SETFONT, (WPARAM)hFont, FALSE);
+        g_hFont = CreateFontW(-24, 0, 0, 0, FW_NORMAL, FALSE, FALSE, FALSE,
+            DEFAULT_CHARSET, OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS,
+            CLEARTYPE_QUALITY, DEFAULT_PITCH | FF_DONTCARE, L"Segoe UI");
+        SendMessageW(g_hEdit, WM_SETFONT, (WPARAM)g_hFont, FALSE);
+        SendMessageW(g_hBtn,  WM_SETFONT, (WPARAM)g_hFont, FALSE);
+        SendMessageW(g_hCut,  WM_SETFONT, (WPARAM)g_hFont, FALSE);
 
         ACCEL accels[] = {
             { FVIRTKEY, VK_F10, IDC_BTN },
@@ -246,6 +249,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp) {
     case WM_DESTROY:
         UnregisterHotKey(g_hMain, HOTKEY_RAISE);
         if (g_ctx) whisper_free(g_ctx);
+        if (g_hFont) DeleteObject(g_hFont);
         PostQuitMessage(0);
         return 0;
     }
