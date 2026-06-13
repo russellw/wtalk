@@ -267,7 +267,7 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE, LPSTR, int nCmdShow) {
 
     g_hMain = CreateWindowW(L"wtalk", L"wtalk",
         WS_OVERLAPPEDWINDOW,
-        CW_USEDEFAULT, CW_USEDEFAULT, 600, 400,
+        CW_USEDEFAULT, CW_USEDEFAULT, 900, 600,
         nullptr, nullptr, hInst, nullptr);
 
     ShowWindow(g_hMain, nCmdShow);
